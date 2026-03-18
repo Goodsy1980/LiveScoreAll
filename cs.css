@@ -218,27 +218,59 @@ body {
   border-radius: 10px;
 }
 
-/* เมื่อเปิดในมือถือ */
+/* จัดการ Layout หลักให้ยืดหยุ่น */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* ป้องกันการเลื่อนซ้ายขวาที่ทำให้เว็บบวม */
+}
+
+/* แก้ไขส่วนสีน้ำเงินทางซ้าย (Sidebar/Container หลัก) */
+/* สมมติว่าชื่อ class คือ .sidebar หรือตัวครอบนอกสุด */
+main,
+.container,
+.sidebar {
+  max-width: 100vw !important;
+  box-sizing: border-box !important;
+}
+
 @media (max-width: 768px) {
-  .match-details {
-    flex-direction: row; /* หรือ column ถ้าอยากให้ทีมอยู่บนล่าง */
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .hero-match h1 {
-    font-size: 2rem; /* ลดขนาดสกอร์หลักลง */
-  }
-
-  .team img {
-    width: 50px; /* ลดขนาดโลโก้ทีมคู่เอก */
-  }
-
+  /* 1. บังคับให้หน้าเว็บเรียงเป็นแนวตั้งทั้งหมด */
+  .hero-match,
+  .match-details,
   .live-matches-grid {
-    grid-template-columns: 1fr; /* ปรับให้คู่อื่นๆ เรียงลงมาแถวละ 1 คู่ */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 10px !important;
+    margin: 0 !important;
   }
 
-  .match-card {
-    padding: 15px;
+  /* 2. จัดการส่วนสีน้ำเงินที่ล้นจอ */
+  .left-side,
+  .side-content,
+  aside {
+    display: none !important; /* ในมือถือแนะนำให้ซ่อนแถบข้างไปก่อนเพื่อให้ดูสกอร์ได้ชัดๆ */
   }
+
+  /* 3. ปรับขนาดฟอนต์สกอร์ไม่ให้ใหญ่เกินจอ */
+  #main-score {
+    font-size: 2.5rem !important; /* ลดขนาดจาก 0-0 ที่ใหญ่เกินไป */
+    letter-spacing: 5px;
+  }
+
+  /* 4. ปรับการ์ดคู่อื่นๆ ให้เต็มความกว้างจอ */
+  .match-card {
+    width: 90% !important;
+    margin-bottom: 15px !important;
+  }
+}
+
+.match-card span {
+  font-size: 12px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* ถ้าชื่อทีมยาวเกินไปให้ขึ้น ... */
+  max-width: 80px;
 }
