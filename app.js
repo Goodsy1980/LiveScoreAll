@@ -86,8 +86,8 @@ function updateUI(matches) {
 }
 
 // 4. เปิดใช้งาน (ลบคอมเมนต์ออก)
-//fetchLiveScores();
-//setInterval(fetchLiveScores, 60000); // อัปเดตทุก 1 นาที
+fetchLiveScores();
+setInterval(fetchLiveScores, 60000); // อัปเดตทุก 1 นาที
 
 // 1. ข้อมูลจำลอง (Mock Data) สำหรับตกแต่ง UI
 // const mockData = [
