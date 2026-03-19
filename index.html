@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LiveSports Dashboard</title>
+    <link rel="stylesheet" href="cs.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <aside class="sidebar">
+        <div class="logo">SoccerFlow</div>
+        <nav></nav>
+      </aside>
+
+      <main class="content">
+        <div class="livesports-brand">
+          <h2>LiveSports</h2>
+        </div>
+
+        <section class="hero-match">
+          <div id="hero-match-container">
+            <div class="match-details">
+              <div class="score-area">
+                <h1 id="main-score">Loading...</h1>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="matches-grid" id="live-matches-container"></div>
+      </main>
+
+      <aside class="right-panel">
+        <h3>Hot News</h3>
+        <div class="news-list">
+          <p style="color: #666; font-size: 0.9rem; margin-top: 10px">
+            No news available...
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
