@@ -274,3 +274,14 @@ main,
   text-overflow: ellipsis; /* ถ้าชื่อทีมยาวเกินไปให้ขึ้น ... */
   max-width: 80px;
 }
+
+.demo-badge {
+  background: #f59e0b;
+}
+
+.demo-note {
+  color: #fbbf24;
+  font-size: 0.7rem;
+  margin-top: 6px;
+  max-width: 180px;
+}
