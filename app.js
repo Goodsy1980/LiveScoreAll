@@ -1,5 +1,4 @@
-const API_KEY = "88050c2f45fd54a5491db660aac5ebb4";
-const BASE_URL = "https://v3.football.api-sports.io/fixtures?live=all";
+const BASE_URL = "/api/live-scores";
 const REFRESH_INTERVAL_MS = 120000;
 
 // Set to true before a presentation to always show the sample scoreboard.
@@ -12,14 +11,6 @@ const MOCK_MATCHES = [
   { teams: { home: { name: "Bayern Munich", logo: "https://media.api-sports.io/football/teams/157.png" }, away: { name: "Dortmund", logo: "https://media.api-sports.io/football/teams/165.png" } }, goals: { home: 4, away: 0 }, fixture: { status: { elapsed: 89 } } },
 ];
 
-const requestOptions = {
-  method: "GET",
-  headers: {
-    "x-apisports-key": API_KEY,
-    "x-rapidapi-host": "v3.football.api-sports.io",
-  },
-};
-
 async function fetchLiveScores() {
   if (DEMO_MODE) {
     renderDemo("Presentation mode is enabled.");
@@ -28,7 +19,7 @@ async function fetchLiveScores() {
 
   try {
     console.log("Updating live scores from all football leagues...");
-    const response = await fetch(BASE_URL, requestOptions);
+    const response = await fetch(BASE_URL);
     if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
 
     const data = await response.json();
