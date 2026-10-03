@@ -1,6 +1,6 @@
 // 1. ตั้งค่าการเชื่อมต่อ
 const API_KEY = "88050c2f45fd54a5491db660aac5ebb4";
-const BASE_URL = " https://v3.football.api-sports.io/fixtures?live=all";
+const BASE_URL = "https://v3.football.api-sports.io/fixtures?live=all";
 
 const requestOptions = {
   method: "GET",
@@ -14,17 +14,25 @@ const requestOptions = {
 // 2. ฟังก์ชันหลักในการดึงข้อมูล
 async function fetchLiveScores() {
   try {
-    console.log("กำลังอัปเดตข้อมูลพรีเมียร์ลีก...");
+    console.log("กำลังอัปเดตข้อมูลทุกลีก...");
     const response = await fetch(BASE_URL, requestOptions);
+
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
     const data = await response.json();
 
     if (data.response && data.response.length > 0) {
       updateUI(data.response);
     } else {
-      console.log("ตอนนี้ไม่มีคู่พรีเมียร์ลีกเตะสด");
+      console.log("ตอนนี้ไม่มีการแข่งขันสด");
       const heroSection = document.getElementById("hero-match-container");
       if (heroSection) {
-        heroSection.innerHTML = `<h1 style="text-align:center; padding: 20px;">No Premier League Live</h1>`;
+        const message = document.createElement("h1");
+        message.style.cssText = "text-align: center; padding: 20px;";
+        message.textContent = "No Live Matches Available";
+        heroSection.replaceChildren(message);
       }
     }
   } catch (error) {
@@ -40,54 +48,100 @@ function updateUI(matches) {
   const heroSection = document.getElementById("hero-match-container");
 
   if (topMatch && heroSection) {
-    heroSection.innerHTML = `
-            <div class="match-details">
-                <div class="team">
-                    <img src="${topMatch.teams.home.logo}" alt="logo" width="100">
-                    <p>${topMatch.teams.home.name}</p>
-                </div>
-                <div class="score-area">
-                    <span class="live-badge">LIVE</span> <h1 id="main-score">${topMatch.goals.home} - ${topMatch.goals.away}</h1>
-                    <p class="match-time">${topMatch.fixture.status.elapsed}'</p>
-                </div>
-                <div class="team">
-                    <img src="${topMatch.teams.away.logo}" alt="logo" width="100">
-                    <p>${topMatch.teams.away.name}</p>
-                </div>
-            </div>
-        `;
+    const matchDetails = document.createElement("div");
+    matchDetails.className = "match-details";
+    matchDetails.append(
+      createTeam(topMatch.teams.home, "team", 100),
+      createScoreArea(topMatch),
+      createTeam(topMatch.teams.away, "team", 100),
+    );
+    heroSection.replaceChildren(matchDetails);
   }
 
   // --- ส่วนคู่อื่นๆ (Matches Grid) ---
   const grid = document.getElementById("live-matches-container");
   if (grid) {
-    grid.innerHTML = "";
+    grid.replaceChildren();
     // ถ้ามีมากกว่า 1 คู่ ให้วนลูปคู่ที่เหลือ
     matches.slice(1).forEach((match) => {
-      const card = `
-                <div class="match-card">
-                    <div class="team-mini">
-                        <img src="${match.teams.home.logo}" width="30">
-                        <span>${match.teams.home.name}</span>
-                    </div>
-                    <div class="score-mini">
-                        <strong>${match.goals.home} - ${match.goals.away}</strong>
-                        <small style="display:block; color:#a259ff;">${match.fixture.status.elapsed}'</small>
-                    </div>
-                    <div class="team-mini" style="justify-content: flex-end;">
-                        <span>${match.teams.away.name}</span>
-                        <img src="${match.teams.away.logo}" width="30">
-                    </div>
-                </div>
-            `;
-      grid.innerHTML += card;
+      grid.append(createMatchCard(match));
     });
   }
 }
 
 // 4. เปิดใช้งาน (ลบคอมเมนต์ออก)
 fetchLiveScores();
-setInterval(fetchLiveScores, 120000); // อัปเดตทุก 1 นาที
+setInterval(fetchLiveScores, 120000); // อัปเดตทุก 2 นาที
+
+function createTeam(team, className, logoWidth) {
+  const teamElement = document.createElement("div");
+  teamElement.className = className;
+
+  const logo = document.createElement("img");
+  logo.src = team.logo;
+  logo.alt = `${team.name} logo`;
+  logo.width = logoWidth;
+
+  const name = document.createElement("p");
+  name.textContent = team.name;
+  teamElement.append(logo, name);
+  return teamElement;
+}
+
+function createScoreArea(match) {
+  const scoreArea = document.createElement("div");
+  scoreArea.className = "score-area";
+
+  const liveBadge = document.createElement("span");
+  liveBadge.className = "live-badge";
+  liveBadge.textContent = "LIVE";
+
+  const score = document.createElement("h1");
+  score.id = "main-score";
+  score.textContent = `${match.goals.home} - ${match.goals.away}`;
+
+  const time = document.createElement("p");
+  time.className = "match-time";
+  time.textContent = `${match.fixture.status.elapsed}'`;
+
+  scoreArea.append(liveBadge, score, time);
+  return scoreArea;
+}
+
+function createMatchCard(match) {
+  const card = document.createElement("div");
+  card.className = "match-card";
+
+  const home = createMiniTeam(match.teams.home);
+  const score = document.createElement("div");
+  score.className = "score-mini";
+  const scoreValue = document.createElement("strong");
+  scoreValue.textContent = `${match.goals.home} - ${match.goals.away}`;
+  const time = document.createElement("small");
+  time.style.cssText = "display: block; color: #a259ff;";
+  time.textContent = `${match.fixture.status.elapsed}'`;
+  score.append(scoreValue, time);
+
+  const away = createMiniTeam(match.teams.away, true);
+  card.append(home, score, away);
+  return card;
+}
+
+function createMiniTeam(team, isAway = false) {
+  const teamElement = document.createElement("div");
+  teamElement.className = "team-mini";
+  if (isAway) teamElement.style.justifyContent = "flex-end";
+
+  const logo = document.createElement("img");
+  logo.src = team.logo;
+  logo.alt = `${team.name} logo`;
+  logo.width = 30;
+
+  const name = document.createElement("span");
+  name.textContent = team.name;
+  teamElement.append(...(isAway ? [name, logo] : [logo, name]));
+  return teamElement;
+}
 
 // 1. ข้อมูลจำลอง (Mock Data) สำหรับตกแต่ง UI
 // const mockData = [
